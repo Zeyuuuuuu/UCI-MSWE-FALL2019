@@ -1,0 +1,11 @@
+{
+    "configurations": [
+        {
+            "type": "java",
+            "name": "CodeLens (Launch) - BankAccounts",
+            "request": "launch",
+            "mainClass": "BankAccounts",
+            "projectName": "ex3.5_e2de4bda"
+        }
+    ]
+}

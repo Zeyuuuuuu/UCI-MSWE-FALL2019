@@ -1,0 +1,1 @@
+SELECT vendor_nam FROM vendors

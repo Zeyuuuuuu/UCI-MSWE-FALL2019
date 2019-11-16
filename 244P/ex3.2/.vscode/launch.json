@@ -1,0 +1,11 @@
+{
+    "configurations": [
+        {
+            "type": "java",
+            "name": "CodeLens (Launch) - VectorTest",
+            "request": "launch",
+            "mainClass": "VectorTest",
+            "projectName": "ex3.2_e2de4bd7"
+        }
+    ]
+}
