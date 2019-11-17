@@ -1,7 +1,12 @@
 import keras
+import numpy as np
+from keras.datasets import reuters
+from keras.utils.np_utils import to_categorical
+from keras import models
+from keras import layers
+
 # keras.__version__
 
-from keras.datasets import reuters
 
 (train_data, train_labels), (test_data, test_labels) = reuters.load_data(num_words=10000)
 # len(train_data)
@@ -16,7 +21,6 @@ decoded_newswire = ' '.join([reverse_word_index.get(i - 3, '?') for i in train_d
 # decoded_newswire
 # train_labels[10]
 
-import numpy as np
 
 def vectorize_sequences(sequences, dimension=10000):
     results = np.zeros((len(sequences), dimension))
@@ -40,18 +44,14 @@ one_hot_train_labels = to_one_hot(train_labels)
 # Our vectorized test labels
 one_hot_test_labels = to_one_hot(test_labels)
 
-from keras.utils.np_utils import to_categorical
 
 one_hot_train_labels = to_categorical(train_labels)
 one_hot_test_labels = to_categorical(test_labels)
 
 
-from keras import models
-from keras import layers
-
 model = models.Sequential()
-model.add(layers.Dense(128, activation='relu', input_shape=(10000,)))
-model.add(layers.Dense(128, activation='relu'))
+model.add(layers.Dense(64, activation='relu', input_shape=(10000,)))
+# model.add(layers.Dense(128, activation='relu'))
 # model.add(layers.Dense(64, activation='relu'))
 
 model.add(layers.Dense(46, activation='softmax'))
