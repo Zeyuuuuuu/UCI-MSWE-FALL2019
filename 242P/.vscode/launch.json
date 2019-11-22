@@ -2,6 +2,13 @@
     "configurations": [
         {
             "type": "java",
+            "name": "CodeLens (Launch) - UDPServer",
+            "request": "launch",
+            "mainClass": "UDPServer",
+            "projectName": "242P_3896fe2b"
+        },
+        {
+            "type": "java",
             "name": "CodeLens (Launch) - TCPClient",
             "request": "launch",
             "mainClass": "TCPClient"
