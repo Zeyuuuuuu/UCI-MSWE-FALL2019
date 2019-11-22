@@ -58,7 +58,7 @@ public class TCPServer {
                     // System.out.println(filePathString);
                     Path filePath = Paths.get(folderPathString + "/" + filePathString);
                     if (Files.notExists(filePath)) {
-                        out.println("error\nInvalid file name.");
+                        out.println("error\nInvalid file name.\nEOF\n");
                         System.err.println("Invalid file name.");
                     } else {
                         StringBuilder sb = new StringBuilder();
@@ -73,7 +73,7 @@ public class TCPServer {
                         break;
                     }
                 } else {
-                    out.println("error\nInvalid file name.");
+                    out.println("error\nInvalid file name.\nEOF\n");
                     System.err.println("Invalid command.");
                 }
                 out.flush();// 清空缓存区
