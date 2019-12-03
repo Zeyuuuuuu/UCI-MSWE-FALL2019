@@ -13,6 +13,7 @@ class SearchEngine:
         self.score = {}
         self.N = 1001
         self.inverseDocumentFrequencyWeights = {}
+        # print([(key,len(self.invertedIndex['student'][key])) for key in sorted(self.invertedIndex['student'],key = lambda x:-len(self.invertedIndex['student'][x]))][:10])
 
 
 # Score(d, q) = Score_counts(d, q) + Score_positions(d, q), where
@@ -22,6 +23,7 @@ class SearchEngine:
     def query(self, q):
         queryTerm = self.pt.processing(q)
         queryTermSet = set(queryTerm)
+        print(queryTermSet)
         if tuple(queryTerm) not in self.score:
             # score[0] cosScore
             # score[1] posScore
@@ -37,7 +39,8 @@ class SearchEngine:
                 if term in self.invertedIndex:
                     # inverse document frequency weight
                     if term not in self.inverseDocumentFrequencyWeights:
-                        self.inverseDocumentFrequencyWeights[term] = math.log(self.N / len(self.invertedIndex[term]))
+                        self.inverseDocumentFrequencyWeights[term] = math.log(self.N / (len(self.invertedIndex[term])))
+                    print(self.N,len(self.invertedIndex[term]))
 
                     for docName in self.invertedIndex[term]:
                         if docName not in self.absTermWeightInDoc:
@@ -56,7 +59,8 @@ class SearchEngine:
                         if docName not in normTermWeightsInDoc:
                             normTermWeightsInDoc[docName] = {}
                         # print(term,docName)
-                        normTermWeightsInDoc[docName][term] = self.absTermWeightInDoc[docName][term] / math.sqrt(termWeightsSquareSumInDoc[docName])
+                        # print(termWeightsSquareSumInDoc[docName])
+                        normTermWeightsInDoc[docName][term] = self.absTermWeightInDoc[docName][term] / (math.sqrt(termWeightsSquareSumInDoc[docName])+0.001)
 
             # term weight in query
             termWeightsSquareSumQ = 0
@@ -67,7 +71,7 @@ class SearchEngine:
             # nomalize
             for term in queryTermSet:
                 if term in self.invertedIndex:
-                    normTermWeightsInQuery[term] /= math.sqrt(termWeightsSquareSumQ)
+                    normTermWeightsInQuery[term] /= (math.sqrt(termWeightsSquareSumQ)+0.001)
 
             # square len sum of query
             squareLenSumQ = 0
@@ -87,12 +91,12 @@ class SearchEngine:
                     if term in normTermWeightsInDoc[doc]:
                         if doc not in score[0]:
                             score[0][doc] = 0
+                        # print(normTermWeightsInDoc[doc][term], normTermWeightsInQuery[term])
                         score[0][doc] += normTermWeightsInDoc[doc][term] * normTermWeightsInQuery[term]
 
             # nomalized cos score
             for doc in score[0]:
-                score[0][doc] /= lenSunQ * math.sqrt(squareLenSumDocs[doc])
-
+                score[0][doc] /= (lenSunQ * math.sqrt(squareLenSumDocs[doc])+0.001)
             maxDoc = ['']*10
             # position score
             if len(queryTerm) > 1:
@@ -104,14 +108,17 @@ class SearchEngine:
                             if i < len(queryTerm) - 1 and docName in self.invertedIndex[queryTerm[i + 1]]:
                                 posi = self.invertedIndex[term][docName]
                                 posj = self.invertedIndex[queryTerm[i + 1]][docName]
+                                # print(posi,posj)
                                 distance = float('inf')
                                 for pi in posi:
                                     for pj in posj:
-                                        if abs(pi - pj) < distance:
+                                        # if pi == pj:
+                                        #     print(term,queryTerm[i + 1],docName,pi,pj)
+                                        if abs(pi - pj) < distance and pi != pj:
                                             distance = abs(pi - pj)
                                 if distance < float('inf'):
-                                    score[1][docName] += 1 / distance
-
+                                    score[1][docName] += 1 / (distance)
+                # print(score[1])
                 maxDoc = heapq.nlargest(10,score[0],key=lambda x: score[0][x] + score[1][x] /(len(queryTerm) - 1))
                 self.score[tuple(queryTerm)] = [(d, score[0][d], score[1][d]/(len(queryTerm) - 1)) for d in maxDoc]
             else:
